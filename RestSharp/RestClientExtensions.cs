@@ -89,7 +89,7 @@ namespace RestSharp
         public static RestResponse<dynamic> ExecuteDynamic(this IRestClient client, IRestRequest request)
         {
             var response = client.Execute<dynamic>(request);
-            var generic = (RestResponse<dynamic>) response;
+            var generic = (RestResponse<dynamic>)response;
             dynamic content = client.Deserialize<object>(response);
 
             generic.Data = content;
@@ -97,6 +97,7 @@ namespace RestSharp
             return generic;
         }
 
+#if !NET40
         /// <summary>
         /// Execute the request using GET HTTP method. Exception will be thrown if the request does not succeed.
         /// </summary>
@@ -195,6 +196,7 @@ namespace RestSharp
             return response.Data;
         }
 
+#endif
         [Obsolete("Use GetAsync")]
         public static Task<T> GetTaskAsync<T>(this IRestClient client, IRestRequest request) where T : new()
             => client.ExecuteGetTaskAsync<T>(request).ContinueWith(x => x.Result.Data);
@@ -365,12 +367,12 @@ namespace RestSharp
         {
             var exception = response.ResponseStatus switch
             {
-                ResponseStatus.Aborted   => new WebException("Request aborted"),
-                ResponseStatus.Error     => response.ErrorException,
-                ResponseStatus.TimedOut  => new TimeoutException("Request timed out"),
-                ResponseStatus.None      => null,
+                ResponseStatus.Aborted => new WebException("Request aborted"),
+                ResponseStatus.Error => response.ErrorException,
+                ResponseStatus.TimedOut => new TimeoutException("Request timed out"),
+                ResponseStatus.None => null,
                 ResponseStatus.Completed => null,
-                _                        => throw new ArgumentOutOfRangeException()
+                _ => throw new ArgumentOutOfRangeException()
             };
 
             if (exception != null)

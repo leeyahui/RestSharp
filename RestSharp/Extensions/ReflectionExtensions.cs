@@ -60,25 +60,37 @@ namespace RestSharp.Extensions
         {
             while (toCheck != null && toCheck != typeof(object))
             {
-                var cur = toCheck.GetTypeInfo().IsGenericType
-                    ? toCheck.GetGenericTypeDefinition()
-                    : toCheck;
-
-                if (generic == cur)
+#if NET40
+                Type right = toCheck.IsGenericType ? toCheck.GetGenericTypeDefinition() : toCheck;
+                if (generic == right)
                 {
                     return true;
                 }
-                toCheck = toCheck.GetTypeInfo().BaseType;
+                toCheck = toCheck.BaseType;
+#else
+                 var cur = toCheck.GetTypeInfo().IsGenericType
+                                    ? toCheck.GetGenericTypeDefinition()
+                                    : toCheck;
+
+                                if (generic == cur)
+                                {
+                                    return true;
+                                }
+                                toCheck = toCheck.GetTypeInfo().BaseType;
+#endif
+
             }
 
             return false;
         }
 
+#if !NET40
         [Obsolete("This method will be removed soon. If you use it, please copy the code to your project.")]
         public static object ChangeType(this object source, TypeInfo newType)
         {
             return Convert.ChangeType(source, newType.AsType());
         }
+#endif
 
         public static object ChangeType(this object source, Type newType, CultureInfo culture)
         {
@@ -109,7 +121,7 @@ namespace RestSharp.Extensions
 
             if (enumValueAsUnderlyingType != null && Enum.IsDefined(type, enumValueAsUnderlyingType))
             {
-                ret = (Enum) Enum.ToObject(type, enumValueAsUnderlyingType);
+                ret = (Enum)Enum.ToObject(type, enumValueAsUnderlyingType);
             }
 
             return ret;

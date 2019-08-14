@@ -84,9 +84,11 @@ namespace RestSharp
                 }
                 else
                 {
-                    webRequest.GetResponseAsync();
+#if !NET40
+                    webRequest.GetResponseAsync(); 
+#endif
 
-                    timeoutState = new TimeOutState {Request = webRequest};
+                    timeoutState = new TimeOutState { Request = webRequest };
 
                     var asyncResult = webRequest.BeginGetResponse(
                         result => ResponseCallback(result, callback), webRequest);
@@ -143,7 +145,7 @@ namespace RestSharp
         private void WriteRequestBodyAsync(HttpWebRequest webRequest, Action<HttpResponse> callback)
         {
             IAsyncResult asyncResult;
-            timeoutState = new TimeOutState {Request = webRequest};
+            timeoutState = new TimeOutState { Request = webRequest };
 
             if (HasBody || HasFiles || AlwaysMultipartFormData)
             {
@@ -188,11 +190,11 @@ namespace RestSharp
 
         private void RequestStreamCallback(IAsyncResult result, Action<HttpResponse> callback)
         {
-            var webRequest = (HttpWebRequest) result.AsyncState;
+            var webRequest = (HttpWebRequest)result.AsyncState;
 
             if (timeoutState.TimedOut)
             {
-                var response = new HttpResponse {ResponseStatus = ResponseStatus.TimedOut};
+                var response = new HttpResponse { ResponseStatus = ResponseStatus.TimedOut };
 
                 ExecuteCallback(response, callback);
 
@@ -251,7 +253,7 @@ namespace RestSharp
 
             try
             {
-                var webRequest = (HttpWebRequest) result.AsyncState;
+                var webRequest = (HttpWebRequest)result.AsyncState;
 
                 raw = webRequest.EndGetResponse(result) as HttpWebResponse;
             }
@@ -283,7 +285,7 @@ namespace RestSharp
             {
                 if (timeoutState.TimedOut)
                 {
-                    var response = new HttpResponse {ResponseStatus = ResponseStatus.TimedOut};
+                    var response = new HttpResponse { ResponseStatus = ResponseStatus.TimedOut };
                     ExecuteCallback(response, callback);
 
                     return;
@@ -292,7 +294,9 @@ namespace RestSharp
                 GetRawResponseAsync(result, webResponse =>
                 {
                     var response = ExtractResponseData(webResponse);
-                    webResponse.Dispose();
+#if !NET40
+                    webResponse.Dispose(); 
+#endif
                     ExecuteCallback(response, callback);
                 });
             }

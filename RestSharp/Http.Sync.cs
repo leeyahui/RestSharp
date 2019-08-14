@@ -124,7 +124,7 @@ namespace RestSharp
 
         private static HttpResponse ExtractErrorResponse(Exception ex)
         {
-            var response = new HttpResponse {ErrorMessage = ex.Message};
+            var response = new HttpResponse { ErrorMessage = ex.Message };
             if (ex is WebException webException && webException.Status == WebExceptionStatus.Timeout)
             {
                 response.ResponseStatus = ResponseStatus.TimedOut;
@@ -156,7 +156,7 @@ namespace RestSharp
         {
             try
             {
-                return (HttpWebResponse) request.GetResponse();
+                return (HttpWebResponse)request.GetResponse();
             }
             catch (WebException ex)
             {
@@ -255,7 +255,9 @@ namespace RestSharp
             if (FollowRedirects && MaxRedirects.HasValue)
                 webRequest.MaximumAutomaticRedirections = MaxRedirects.Value;
 
-            webRequest.ServerCertificateValidationCallback = RemoteCertificateValidationCallback;
+#if !NET40
+            webRequest.ServerCertificateValidationCallback = RemoteCertificateValidationCallback; 
+#endif
 
             webRequest.ConnectionGroupName = ConnectionGroupName;
 

@@ -131,7 +131,7 @@ namespace RestSharp.Serializers
         {
             var objType = obj.GetType();
             var props = objType.GetProperties()
-                .Select(p => new {p, indexAttribute = p.GetAttribute<SerializeAsAttribute>()})
+                .Select(p => new { p, indexAttribute = p.GetAttribute<SerializeAsAttribute>() })
                 .Where(t => t.p.CanRead && t.p.CanWrite)
                 .OrderBy(t => t.indexAttribute?.Index ?? int.MaxValue)
                 .Select(t => t.p);
@@ -176,8 +176,14 @@ namespace RestSharp.Serializers
 
                 var nsName = name.AsNamespaced(Namespace);
                 var element = new XElement(nsName);
-                if (propType.GetTypeInfo().IsPrimitive || propType.GetTypeInfo().IsValueType ||
+#if NET40
+                if (propType.IsPrimitive || propType.IsValueType ||
                     propType == typeof(string))
+#else
+               if (propType.GetTypeInfo().IsPrimitive || propType.GetTypeInfo().IsValueType ||
+                    propType == typeof(string))
+#endif
+
                 {
                     var value = GetSerializedValue(rawValue);
 
@@ -236,7 +242,7 @@ namespace RestSharp.Serializers
                     output = time.ToString(DateFormat, CultureInfo.InvariantCulture);
                     break;
                 case bool _:
-                    output = ((bool) obj).ToString().ToLowerInvariant();
+                    output = ((bool)obj).ToString().ToLowerInvariant();
                     break;
             }
 

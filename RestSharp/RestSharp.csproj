@@ -1,16 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="../netfx.props" />
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net452;net40</TargetFrameworks>
     <PackageReleaseNotes>For full release notes see https://github.com/restsharp/RestSharp/blob/master/releasenotes.md</PackageReleaseNotes>
     <PackageIconUrl>https://raw.githubusercontent.com/restsharp/RestSharp/master/restsharp.png</PackageIconUrl>
     <PackageLicenseUrl>https://github.com/restsharp/RestSharp/blob/master/LICENSE.txt</PackageLicenseUrl>
     <PackageProjectUrl>http://restsharp.org</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/restsharp/RestSharp.git</RepositoryUrl>
+    <RepositoryUrl>https://github.com/leeyahui/RestSharp.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <Description>Simple REST and HTTP API Client</Description>
-    <Authors>John Sheehan, RestSharp Community</Authors>
-    <Version>106.8.10</Version>
+    <Authors>liyahui</Authors>
+    <Version>108.0.0</Version>
     <Optimize>true</Optimize>
     <AssemblyOriginatorKeyFile>..\RestSharp.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
@@ -25,6 +25,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Reference Include="System.Web" Condition="'$(TargetFramework)' == 'net40'" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="System.Web" Condition="'$(TargetFramework)' == 'net452'" />
   </ItemGroup>
 
@@ -36,5 +40,10 @@
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
+    <PackageId>JHECIS.RestSharp</PackageId>
+    <AssemblyVersion>108.0.0.0</AssemblyVersion>
+    <FileVersion>108.0.0.0</FileVersion>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 </Project>

@@ -65,9 +65,9 @@ namespace RestSharp.Deserializers
             var objType = x.GetType();
 
             if (objType.IsSubclassOfRawGeneric(typeof(List<>)))
-                x = (T) HandleListDerivative(root, objType.Name, objType);
+                x = (T)HandleListDerivative(root, objType.Name, objType);
             else
-                x = (T) Map(x, root);
+                x = (T)Map(x, root);
 
             return x;
         }
@@ -101,9 +101,14 @@ namespace RestSharp.Deserializers
 
             foreach (var prop in props)
             {
+#if NET40
+                var type = prop.PropertyType;
+                var typeIsPublic = type.IsPublic || type.IsNestedPublic;
+#else
                 var type = prop.PropertyType.GetTypeInfo();
                 var typeIsPublic = type.IsPublic || type.IsNestedPublic;
 
+#endif
                 if (!typeIsPublic || !prop.CanWrite)
                     continue;
 
@@ -114,7 +119,7 @@ namespace RestSharp.Deserializers
 
                 if (attributes.Any())
                 {
-                    var attribute = (DeserializeAsAttribute) attributes.First();
+                    var attribute = (DeserializeAsAttribute)attributes.First();
 
                     name = attribute.Name.AsNamespaced(Namespace);
                     isNameDefinedInAttribute = !string.IsNullOrEmpty(name?.LocalName);
@@ -145,7 +150,7 @@ namespace RestSharp.Deserializers
                         var textNode = root.Nodes().FirstOrDefault(n => n is XText);
                         if (textNode != null)
                         {
-                            value = ((XText) textNode).Value;
+                            value = ((XText)textNode).Value;
                             prop.SetValue(x, value, null);
                         }
 
@@ -157,7 +162,12 @@ namespace RestSharp.Deserializers
                     {
                         var genericType = type.GetGenericArguments()[0];
                         var first = GetElementByName(root, genericType.Name);
-                        var list = (IList) Activator.CreateInstance(type.AsType());
+#if NET40
+                        var list = (IList)Activator.CreateInstance(type);
+#else
+                        var list = (IList)Activator.CreateInstance(type.AsType());
+#endif
+
 
                         if (first != null && root != null)
                         {
@@ -180,11 +190,18 @@ namespace RestSharp.Deserializers
                         prop.SetValue(x, null, null);
                         continue;
                     }
-
+#if NET40
+                    type = type.GetGenericArguments()[0];
+#else
                     type = type.GetGenericArguments()[0].GetTypeInfo();
+#endif
                 }
-
+#if NET40
+                var asType = type;
+#else
                 var asType = type.AsType();
+#endif
+
                 if (asType == typeof(bool))
                 {
                     var toConvert = value.ToString()
@@ -198,7 +215,11 @@ namespace RestSharp.Deserializers
                 }
                 else if (type.IsEnum)
                 {
+#if NET40
+                    var converted = type.FindEnumValue(value.ToString(), Culture);
+#else
                     var converted = type.AsType().FindEnumValue(value.ToString(), Culture);
+#endif
 
                     prop.SetValue(x, converted, null);
                 }
@@ -270,7 +291,7 @@ namespace RestSharp.Deserializers
                 }
                 else if (type.IsGenericType)
                 {
-                    var list = (IList) Activator.CreateInstance(asType);
+                    var list = (IList)Activator.CreateInstance(asType);
                     var container = this.GetElementByName(root, name);
 
                     if (container.HasElements)
@@ -350,7 +371,7 @@ namespace RestSharp.Deserializers
                 ? type.GetGenericArguments()[0]
                 : type.BaseType.GetGenericArguments()[0];
 
-            var list = (IList) Activator.CreateInstance(type);
+            var list = (IList)Activator.CreateInstance(type);
             IList<XElement> elements = root.Descendants(t.Name.AsNamespaced(Namespace))
                 .ToList();
             var name = t.Name;
@@ -405,10 +426,17 @@ namespace RestSharp.Deserializers
             {
                 item = element.Value;
             }
+#if NET40
+            else if (t.IsPrimitive)
+            {
+                item = element.Value.ChangeType(t, Culture);
+            }
+#else
             else if (t.GetTypeInfo().IsPrimitive)
             {
                 item = element.Value.ChangeType(t, Culture);
             }
+#endif
             else
             {
                 item = Activator.CreateInstance(t);
