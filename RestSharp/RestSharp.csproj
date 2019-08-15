@@ -4,13 +4,14 @@
     <TargetFrameworks>netstandard2.0;net452;net40</TargetFrameworks>
     <PackageReleaseNotes>For full release notes see https://github.com/restsharp/RestSharp/blob/master/releasenotes.md</PackageReleaseNotes>
     <PackageIconUrl>https://raw.githubusercontent.com/restsharp/RestSharp/master/restsharp.png</PackageIconUrl>
-    <PackageLicenseUrl>https://github.com/restsharp/RestSharp/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <PackageLicenseUrl></PackageLicenseUrl>
     <PackageProjectUrl>http://restsharp.org</PackageProjectUrl>
     <RepositoryUrl>https://github.com/leeyahui/RestSharp.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <Description>Simple REST and HTTP API Client</Description>
+    <Description>Simple REST and HTTP API Client
+1.修改parameter name 为空的bug</Description>
     <Authors>liyahui</Authors>
-    <Version>108.0.0</Version>
+    <Version>108.0.0.1</Version>
     <Optimize>true</Optimize>
     <AssemblyOriginatorKeyFile>..\RestSharp.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
@@ -33,17 +34,20 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-18618-05" PrivateAssets="All" />
-    <PackageReference Include="MinVer" Version="1.1.0" PrivateAssets="All" />
+    <!--<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-18618-05" PrivateAssets="All" />
+    <PackageReference Include="MinVer" Version="1.1.0" PrivateAssets="All" />-->
   </ItemGroup>
 
   <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
     <PackageId>JHECIS.RestSharp</PackageId>
-    <AssemblyVersion>108.0.0.0</AssemblyVersion>
-    <FileVersion>108.0.0.0</FileVersion>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <AssemblyVersion>108.0.0.1</AssemblyVersion>
+    <FileVersion>108.0.0.1</FileVersion>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <ApplicationIcon />
+    <Win32Resource />
   </PropertyGroup>
 </Project>

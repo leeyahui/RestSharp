@@ -27,7 +27,7 @@ namespace RestSharp
     {
         public Parameter(string name, object value, ParameterType type)
         {
-            Ensure.NotEmpty(name, nameof(name));
+            //Ensure.NotEmpty(name, nameof(name));
             
             Name = name;
             Value = value;
